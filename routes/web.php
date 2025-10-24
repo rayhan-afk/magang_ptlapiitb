@@ -1,18 +1,20 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+ // Pastikan Anda sudah punya Auth routes (bisa dari Laravel UI/Breeze/Jetstream atau manual)
+ // Contoh jika menggunakan Laravel UI:
+ // Auth::routes();
 
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| contains the "web" middleware group. Now create something great!
-|
-*/
+ // Route awal (jika perlu)
+ Route::get('/', function () {
+     return view('welcome'); //
+ });
 
-Route::get('/', function () {
-    return view('welcome');
-});
+ // Route Dashboard (membutuhkan login)
+ Route::middleware(['auth'])->group(function () {
+     Route::get('/dashboard', function () {
+         return view('dashboard');
+     })->name('dashboard'); // Beri nama 'dashboard'
+
+     // Tambahkan route lain yang butuh login di sini
+ });
