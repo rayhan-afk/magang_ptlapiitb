@@ -1,4 +1,4 @@
-@extends('layouts.app') {{-- Gunakan layout utama (dari Breeze) --}}
+@extends('layouts.app') {{-- Gunakan layout utama (dari Breeze) ----}}
 
 @section('title', 'Selamat Datang di Kantin Kampus SCFS')
 
@@ -14,7 +14,7 @@
     <div class="bg-gradient-to-r from-blue-500 to-indigo-600 text-white py-20 px-4 sm:px-6 lg:px-8 text-center">
         
         <h1 class="text-4xl sm:text-5xl font-extrabold mb-4">Pesan Makanan Kantin Jadi Lebih Mudah!</h1>
-        <p class="text-lg sm:text-xl mb-8 max-w-2xl mx-auto">Temukan menu favoritmu dari berbagai kantin di kampus SCFS dalam satu aplikasi.</p>
+        <p class="text-lg sm:text-xl mb-8 max-w-2xl mx-auto">Temukan menu favoritmu dari berbagai kantin di kampus ITB dalam satu aplikasi.</p>
         @guest
             <a href="{{ route('register') }}" class="inline-block bg-yellow-400 hover:bg-yellow-500 text-gray-800 font-bold py-3 px-6 rounded-lg text-lg transition duration-300">Daftar Sekarang</a>
             <a href="{{ route('login') }}" class="ml-4 inline-block bg-white hover:bg-gray-100 text-indigo-600 font-bold py-3 px-6 rounded-lg text-lg transition duration-300">Login</a>
@@ -32,6 +32,7 @@
                 @forelse ($kantinPopuler as $kantin)
                     <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden transform hover:scale-105 transition duration-300">
                         {{-- Mengakses properti objek ->gambar, beri placeholder jika null --}}
+                        {{-- Ganti URL Placeholder jika Anda punya gambar kantin --}}
                         <img src="{{ $kantin->gambar ?? 'https://via.placeholder.com/300x200?text=' . urlencode($kantin->nama_kantin) }}" alt="{{ $kantin->nama_kantin }}" class="w-full h-48 object-cover">
                         <div class="p-4">
                             {{-- Mengakses properti objek ->nama_kantin --}}
@@ -58,13 +59,24 @@
                  {{-- Menggunakan data dari Controller --}}
                  @forelse ($menuAndalan as $menu)
                     <div class="border dark:border-gray-700 rounded-lg overflow-hidden shadow-sm hover:shadow-lg transition duration-300">
-                         {{-- Mengakses properti objek ->gambar, beri placeholder jika null --}}
-                         <img src="{{ $menu->gambar ?? 'https://via.placeholder.com/300x200?text=' . urlencode($menu->nama_menu) }}" alt="{{ $menu->nama_menu }}" class="w-full h-40 object-cover">
+                         {{-- GANTI URL GAMBAR DI SINI --}}
+                         @php
+                             // Logika sederhana untuk memilih gambar berdasarkan nama menu
+                             $imageUrl = match (strtolower($menu->nama_menu)) {
+                                 'nasi goreng spesial' => 'https://images.unsplash.com/photo-1512058564366-18510be2db19?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80',
+                                 'ayam geprek pedas' => 'https://images.unsplash.com/photo-1562802379-91896752763f?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80',
+                                 'soto ayam lamongan' => 'https://images.unsplash.com/photo-1627803445842-140a831518ce?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80', // Contoh gambar soto
+                                 'mie ayam bakso' => 'https://images.unsplash.com/photo-1582576161842-3a54d4f29631?ixlib=rb-1.2.1&auto=format&fit=crop&w=300&q=80', // Contoh gambar mie ayam
+                                 default => 'https://via.placeholder.com/300x200?text=' . urlencode($menu->nama_menu) // Fallback ke placeholder
+                             };
+                         @endphp
+                         <img src="{{ $imageUrl }}" alt="{{ $menu->nama_menu }}" class="w-full h-40 object-cover">
+                         {{-- AKHIR BAGIAN GAMBAR --}}
+
                          <div class="p-4">
                             {{-- Mengakses properti objek ->nama_menu --}}
                             <h4 class="text-lg font-semibold text-gray-900 dark:text-gray-100">{{ $menu->nama_menu }}</h4>
                             {{-- Mengakses nama kantin melalui relasi ->kantin->nama_kantin --}}
-                            {{-- Tambahkan ?? 'Kantin tidak diketahui' untuk jaga-jaga jika relasi null --}}
                             <p class="text-sm text-gray-500 dark:text-gray-400">{{ $menu->kantin->nama_kantin ?? 'Kantin tidak diketahui' }}</p>
                             {{-- Mengakses properti objek ->harga dan format --}}
                             <p class="text-lg font-bold text-green-600 dark:text-green-400 mt-2">Rp {{ number_format($menu->harga, 0, ',', '.') }}</p>
