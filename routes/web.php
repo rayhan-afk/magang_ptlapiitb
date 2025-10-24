@@ -1,20 +1,31 @@
 <?php
 
+use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
- // Pastikan Anda sudah punya Auth routes (bisa dari Laravel UI/Breeze/Jetstream atau manual)
- // Contoh jika menggunakan Laravel UI:
- // Auth::routes();
 
- // Route awal (jika perlu)
- Route::get('/', function () {
-     return view('welcome'); //
- });
+/*
+|--------------------------------------------------------------------------
+| Web Routes
+|--------------------------------------------------------------------------
+|
+| Here is where you can register web routes for your application. These
+| routes are loaded by the RouteServiceProvider and all of them will
+| be assigned to the "web" middleware group. Make something great!
+|
+*/
 
- // Route Dashboard (membutuhkan login)
- Route::middleware(['auth'])->group(function () {
-     Route::get('/dashboard', function () {
-         return view('dashboard');
-     })->name('dashboard'); // Beri nama 'dashboard'
+Route::get('/', function () {
+    return view('welcome');
+});
 
-     // Tambahkan route lain yang butuh login di sini
- });
+Route::get('/dashboard', function () {
+    return view('dashboard');
+})->middleware(['auth', 'verified'])->name('dashboard');
+
+Route::middleware('auth')->group(function () {
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+});
+
+require __DIR__.'/auth.php';
